@@ -26,12 +26,13 @@ const App = () => {
       setCoords({ lat: latitude, lng: longitude });
     });
   }, []);
+  console.log(coords);
   
   useEffect(() => {
     const filtered = places.filter((place) => Number(place.rating) > rating);
-
     setFilteredPlaces(filtered);
   }, [rating]);
+
   useEffect(() => {
     if (bounds) {
       setIsLoading(true);
