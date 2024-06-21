@@ -1,5 +1,5 @@
 import React from 'react';
-import { Autocomplete } from '@react-google-maps/api';
+import { Autocomplete, GoogleMap, useLoadScript } from '@react-google-maps/api';
 import { AppBar, Toolbar, Typography, InputBase, Box } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 
@@ -8,7 +8,12 @@ import useStyles from './styles.js';
 const Header = ({ onPlaceChanged, onLoad }) => {
   const classes = useStyles();
 
-  return (
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAP_API_KEY,
+    libraries: ["places"],
+  })
+
+  if (isLoaded) return (
     <AppBar position="static">
       <Toolbar className={classes.toolbar}>
         <Typography variant="h5" className={classes.title}>
