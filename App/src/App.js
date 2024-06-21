@@ -22,9 +22,30 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(({ coords: { latitude, longitude } }) => {
-      setCoords({ lat: latitude, lng: longitude });
-    });
+
+    const options = {
+      enableHighAccuracy: false,
+      timeout: 5000,
+      maximumAge: 0,
+    };
+  
+    const success = (pos) => {
+      const crd = pos.coords;
+      console.log("Your current position is:");
+      console.log(`Latitude : ${crd.latitude}`);
+      console.log(`Longitude: ${crd.longitude}`);
+      // console.log(`More or less ${crd.accuracy} meters.`);
+
+      setCoords({ lat: crd.latitude, lng: crd.longitude});
+    }
+  
+    const error = (err) => {
+      console.warn(`ERROR(${err.code}): ${err.message}`);
+      console.log("Using Default Co-ordinates for now.")
+      setCoords({ lat: 42.1596, lng: -70.8217 });
+    }
+
+    navigator.geolocation.getCurrentPosition(success, error, options);
   }, []);
   console.log(coords);
   
