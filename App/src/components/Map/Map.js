@@ -17,16 +17,22 @@ import useStyles from './styles.js';
 const Mapp = ({ coords, places, setCoords, setBounds, setChildClicked, weatherData }) => {
   const matches = useMediaQuery('(min-width:600px)');
   const classes = useStyles();
-  const pos = { 'lat': 53.54, 'lng': 10 };
+
+  if (!coords.lat) return <>Getting Location...</>
   return (
     <APIProvider apiKey={process.env.REACT_APP_GOOGLE_MAP_API_KEY}>
       <div className={classes.mapContainer}>
         <Map
-          defaultZoom={14}
-          defaultCenter = {pos}
+          defaultZoom={10}
+          defaultCenter = {coords}
           disableDefaultUI={true}
           zoomControl={true}
-          styles={mapStyles}>
+          styles={mapStyles}
+          onCameraChanged={(e) => {
+            // setCoords({ lat: e.center.lat, lng:e.center.lng});
+            console.log(e);
+          }}
+          >
         </Map>
       </div>
     </APIProvider>
