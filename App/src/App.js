@@ -47,7 +47,8 @@ const App = () => {
 
     navigator.geolocation.getCurrentPosition(success, error, options);
   }, []);
-  console.log(coords);
+  // console.log("New Co-Ords"+coords);
+  // console.log("Changed Bounds" + bounds);
   
   useEffect(() => {
     const filtered = places.filter((place) => Number(place.rating) > rating);
@@ -58,16 +59,16 @@ const App = () => {
     if (bounds) {
       setIsLoading(true);
 
-      getWeatherData(coords.lat, coords.lng)
-        .then((data) => setWeatherData(data));
+      // getWeatherData(coords.lat, coords.lng)
+      //   .then((data) => setWeatherData(data));
 
-      getPlacesData(type, bounds.sw, bounds.ne)
-        .then((data) => {
-          setPlaces(data.filter((place) => place.name && place.num_reviews > 0));
-          setFilteredPlaces([]);
-          setRating('');
-          setIsLoading(false);
-        });
+      // getPlacesData(type, bounds.sw, bounds.ne)
+      //   .then((data) => {
+      //     setPlaces(data.filter((place) => place.name && place.num_reviews > 0));
+      //     setFilteredPlaces([]);
+      //     setRating('');
+      //     setIsLoading(false);
+      //   });
     }
   }, [bounds, type]);
 

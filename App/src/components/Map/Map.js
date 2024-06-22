@@ -28,10 +28,19 @@ const Mapp = ({ coords, places, setCoords, setBounds, setChildClicked, weatherDa
           disableDefaultUI={true}
           zoomControl={true}
           styles={mapStyles}
-          onCameraChanged={(e) => {
-            // setCoords({ lat: e.center.lat, lng:e.center.lng});
+          onCenterChanged={(e) => {
+            setCoords({ lat: e.detail.center.lat, lng:e.detail.center.lng});
+          }}
+          onBoundsChanged={(e) => {
+            setBounds({ 
+              east: e.detail.bounds.east, 
+              west: e.detail.bounds.west,
+              north: e.detail.bounds.north,
+              south: e.detail.bounds.south 
+            });
             console.log(e);
           }}
+          // TODO: Add onZoomChange to handle bounds and coords changes
           >
         </Map>
       </div>
