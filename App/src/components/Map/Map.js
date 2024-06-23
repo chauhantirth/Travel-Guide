@@ -22,16 +22,18 @@ const MapComponent = ({ onMapLoaded }) => {
       onMapLoaded(map);
     }
   }, [map, onMapLoaded]);
-
   return <>...</>;
 };
 
-const Mapp = ({ coords, places, setCoords, setBounds, setChildClicked, weatherData }) => {
+const Mapp = ({ coords, bounds, places, setCoords, setBounds, setChildClicked, weatherData }) => {
   const matches = useMediaQuery('(min-width:600px)');
   const classes = useStyles();
+  const [tempCoords, setTempCoords] = useState({});
   const [mapInstance, setMapInstance] = useState(null); 
+  const [firstVal, setfirstVal] = useState(1);
 
   const updateBounds = () => {
+    console.log("Updating Bounds")
     if (mapInstance) {
       const bnds = mapInstance.getBounds();
       if (bnds) {
@@ -52,23 +54,49 @@ const Mapp = ({ coords, places, setCoords, setBounds, setChildClicked, weatherDa
       <div className={classes.mapContainer}>
         <Map
           id={'main-map'}
-          on
           defaultZoom={13}
           defaultCenter = {coords}
-          // center={coords}
           disableDefaultUI={false}
           zoomControl={true}
           styles={mapStyles}
           onCenterChanged={(e) => {
-            // console.log("Coords Changed")
-            setCoords({ lat: e.detail.center.lat, lng:e.detail.center.lng});
-            // updateBounds();
+            if(e.detail.center.lng > coords.lng) {
+              if (e.detail.center.lng - coords.lng > 0.10) {
+                setCoords({ lat: e.detail.center.lat, lng:e.detail.center.lng});
+                updateBounds();
+                console.log("(moved right) lng diff > .10");
+              }
+            } else {
+              if(coords.lng - e.detail.center.lng > 0.10) {
+                setCoords({ lat: e.detail.center.lat, lng:e.detail.center.lng});
+                updateBounds();
+                console.log("(moved left) lng diff > .10");
+              }
+            }
+
+            if(e.detail.center.lat > coords.lat) {
+              if (e.detail.center.lat - coords.lat > 0.10) {
+                setCoords({ lat: e.detail.center.lat, lng:e.detail.center.lng});
+                updateBounds();
+                console.log("(moved up) lat diff > .10");
+              }
+            } else {
+              if(coords.lat - e.detail.center.lat > 0.10) {
+                setCoords({ lat: e.detail.center.lat, lng:e.detail.center.lng});
+                updateBounds();
+                console.log("(moved down) lat diff > .10");
+              }
+            }
+
+            setTempCoords({ lat: e.detail.center.lat, lng:e.detail.center.lng});
+            // console.log("Temp Coords: "+tempCoords);
           }}
           onBoundsChanged={(e) => {
-            console.log("Changing Bounds")
-            updateBounds();
+            if (firstVal == 1) {
+              updateBounds();
+              setfirstVal(0);
+            }
           }}
-          // TODO: Add onZoomChange to handle bounds and coords changes
           >
         </Map>
         <MapComponent onMapLoaded={handleMapLoad}/>

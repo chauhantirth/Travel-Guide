@@ -47,8 +47,6 @@ const App = () => {
 
     navigator.geolocation.getCurrentPosition(success, error, options);
   }, []);
-  // console.log("New Co-Ords"+coords);
-  // console.log("Changed Bounds" + bounds);
   
   useEffect(() => {
     const filtered = places.filter((place) => Number(place.rating) > rating);
@@ -61,7 +59,7 @@ const App = () => {
 
       // getWeatherData(coords.lat, coords.lng)
       //   .then((data) => setWeatherData(data));
-      console.log(bounds);
+
       getPlacesData(type, bounds.southWest, bounds.northEast)
         .then((data) => {
           setPlaces(data.filter((place) => place.name && place.num_reviews > 0));
@@ -106,6 +104,7 @@ const App = () => {
             setBounds={setBounds}
             setCoords={setCoords}
             coords={coords}
+            bounds={bounds}
             places={filteredPlaces.length ? filteredPlaces : places}
             weatherData={weatherData}
             // placeCahnge={onPlaceChanged}
