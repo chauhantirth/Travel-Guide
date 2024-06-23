@@ -20,6 +20,7 @@ const App = () => {
   const [autocomplete, setAutocomplete] = useState(null);
   const [childClicked, setChildClicked] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [Temp, setTemp] = useState(1);
 
   useEffect(() => {
 
@@ -28,14 +29,13 @@ const App = () => {
       timeout: 5000,
       maximumAge: 0,
     };
-  
+
     const success = (pos) => {
       const crd = pos.coords;
       console.log("Your current position is:");
       console.log(`Latitude : ${crd.latitude}`);
       console.log(`Longitude: ${crd.longitude}`);
       // console.log(`More or less ${crd.accuracy} meters.`);
-
       setCoords({ lat: crd.latitude, lng: crd.longitude});
     }
   
@@ -56,29 +56,32 @@ const App = () => {
   }, [rating]);
 
   useEffect(() => {
-    if (bounds) {
+    if (bounds && Temp == 1) {
       setIsLoading(true);
 
       // getWeatherData(coords.lat, coords.lng)
       //   .then((data) => setWeatherData(data));
-
-      // getPlacesData(type, bounds.sw, bounds.ne)
-      //   .then((data) => {
-      //     setPlaces(data.filter((place) => place.name && place.num_reviews > 0));
-      //     setFilteredPlaces([]);
-      //     setRating('');
-      //     setIsLoading(false);
-      //   });
+      console.log(bounds);
+      getPlacesData(type, bounds.southWest, bounds.northEast)
+        .then((data) => {
+          setPlaces(data.filter((place) => place.name && place.num_reviews > 0));
+          setFilteredPlaces([]);
+          setRating('');
+          setIsLoading(false);
+          console.log(data);
+        });
+      setTemp(0);
     }
   }, [bounds, type]);
 
   const onLoad = (autoC) => setAutocomplete(autoC);
 
   const onPlaceChanged = () => {
+    setCoords({});
     const lat = autocomplete.getPlace().geometry.location.lat();
     const lng = autocomplete.getPlace().geometry.location.lng();
-
-    setCoords({ lat, lng });
+    setCoords({ lat: lat, lng: lng });
+    console.log(coords);
   };
 
   return (
@@ -105,6 +108,7 @@ const App = () => {
             coords={coords}
             places={filteredPlaces.length ? filteredPlaces : places}
             weatherData={weatherData}
+            // placeCahnge={onPlaceChanged}
           />
         </Grid>
       </Grid>

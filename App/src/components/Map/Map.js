@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 // import GoogleMapReact from 'google-map-react';
 import { Paper, Typography, useMediaQuery } from '@material-ui/core';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
@@ -7,6 +7,7 @@ import Rating from '@material-ui/lab/Rating';
 import {
   APIProvider,
   Map,
+  useMap,
   Pin,
   InfoWindow
 } from "@vis.gl/react-google-maps";
@@ -14,40 +15,66 @@ import {
 import mapStyles from '../../mapStyles';
 import useStyles from './styles.js';
 
+const MapComponent = ({ onMapLoaded }) => {
+  const map = useMap('main-map');
+  useEffect(() => {
+    if (map) {
+      onMapLoaded(map);
+    }
+  }, [map, onMapLoaded]);
+
+  return <>...</>;
+};
+
 const Mapp = ({ coords, places, setCoords, setBounds, setChildClicked, weatherData }) => {
   const matches = useMediaQuery('(min-width:600px)');
   const classes = useStyles();
+  const [mapInstance, setMapInstance] = useState(null); 
+
+  const updateBounds = () => {
+    if (mapInstance) {
+      const bnds = mapInstance.getBounds();
+      if (bnds) {
+        const ne = bnds.getNorthEast();
+        const sw = bnds.getSouthWest();
+        setBounds({ northEast: {lat: ne.lat(), lng: ne.lng()}, southWest: {lat: sw.lat(), lng: sw.lng()} });
+      }
+    }
+  };
+
+  const handleMapLoad = (map) => {
+    setMapInstance(map);
+  };
 
   if (!coords.lat) return <>Getting Location...</>
   return (
     <APIProvider apiKey={process.env.REACT_APP_GOOGLE_MAP_API_KEY}>
       <div className={classes.mapContainer}>
         <Map
-          defaultZoom={10}
+          id={'main-map'}
+          on
+          defaultZoom={13}
           defaultCenter = {coords}
-          disableDefaultUI={true}
+          // center={coords}
+          disableDefaultUI={false}
           zoomControl={true}
           styles={mapStyles}
           onCenterChanged={(e) => {
+            // console.log("Coords Changed")
             setCoords({ lat: e.detail.center.lat, lng:e.detail.center.lng});
+            // updateBounds();
           }}
           onBoundsChanged={(e) => {
-            setBounds({ 
-              east: e.detail.bounds.east, 
-              west: e.detail.bounds.west,
-              north: e.detail.bounds.north,
-              south: e.detail.bounds.south 
-            });
-            console.log(e);
+            console.log("Changing Bounds")
+            updateBounds();
           }}
           // TODO: Add onZoomChange to handle bounds and coords changes
           >
         </Map>
+        <MapComponent onMapLoaded={handleMapLoad}/>
       </div>
     </APIProvider>
   )
-
-
 
   // return (
   //   <div className={classes.mapContainer}>
