@@ -14,7 +14,7 @@ const List = ({ places, type, setType, rating, setRating, childClicked, isLoadin
 
   return (
     <div className={classes.container}>
-      <Typography variant="h4">Restaurants, Hotels & Attractions around you</Typography>
+      <Typography variant="h5">Restaurants, Hotels & Attractions around You</Typography>
       {isLoading ? (
         <div className={classes.loading}>
           <CircularProgress size="5rem" />
@@ -45,6 +45,7 @@ const List = ({ places, type, setType, rating, setRating, childClicked, isLoadin
               </Grid>
             ))}
           </Grid>
+          <button>Show Route</button>
         </>
       )}
     </div>
