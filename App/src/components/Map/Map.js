@@ -14,7 +14,7 @@ import {
   AdvancedMarker
 } from "@vis.gl/react-google-maps";
 
-import mapStyles from '../../mapStyles';
+import mapStyles from './mapStyles';
 import useStyles from './styles.js';
 // import { Marker } from '@react-google-maps/api';
 

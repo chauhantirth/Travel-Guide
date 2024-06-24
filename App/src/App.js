@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { CssBaseline, Grid } from '@material-ui/core';
 
 import { getPlacesData, getWeatherData } from './api/index.js';
@@ -22,6 +22,26 @@ const App = () => {
   const [childClicked, setChildClicked] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [Temp, setTemp] = useState(1);
+
+  const [showRoute, setShowRoute] = useState(false);
+  const [routeItems, setRouteItems] = useState([]);
+
+  const handleCheckboxChange = useCallback((item) => {
+    setRouteItems(prevRouteItems => {
+      if (prevRouteItems.includes(item)) {
+        // Remove item if already selected
+        return prevRouteItems.filter(place => place.location_id !== item.location_id);
+      } else {
+        // Add item if not selected
+        return [...prevRouteItems, item];
+      }
+    });
+  });
+
+  useEffect(() => {
+    console.log("Changed RouteItems List.")
+    console.log(routeItems)
+  }, [routeItems])
 
   useEffect(() => {
 
@@ -94,11 +114,17 @@ const App = () => {
           <List
             isLoading={isLoading}
             childClicked={childClicked}
+            setChildClicked={setChildClicked}
             places={filteredPlaces.length ? filteredPlaces : places}
             type={type}
             setType={setType}
             rating={rating}
             setRating={setRating}
+            routeItems={routeItems}
+            setRouteItems={setRouteItems}
+            showRoute={showRoute}
+            setShowRoute={setShowRoute}
+            handleCheckboxChange={handleCheckboxChange}
           />
         </Grid>
         <Grid item xs={12} md={8} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

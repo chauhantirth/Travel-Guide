@@ -4,6 +4,10 @@ export default makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1), minWidth: 120, marginBottom: '30px',
   },
+  routeButton: {
+    margin: theme.spacing(1), width: '120px', marginBottom: '30px', marginTop: '25px',
+    borderRadius: '12px',
+  },
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
