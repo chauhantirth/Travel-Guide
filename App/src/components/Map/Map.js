@@ -9,12 +9,14 @@ import {
   Map,
   useMap,
   Pin,
+  Marker,
   InfoWindow,
   AdvancedMarker
 } from "@vis.gl/react-google-maps";
 
 import mapStyles from '../../mapStyles';
 import useStyles from './styles.js';
+// import { Marker } from '@react-google-maps/api';
 
 const MapComponent = ({ onMapLoaded }) => {
   const map = useMap('main-map');
@@ -31,6 +33,8 @@ const Mapp = ({ coords, bounds, places, setCoords, setBounds, setChildClicked, w
   const classes = useStyles();
   const [tempCoords, setTempCoords] = useState({});
   const [mapInstance, setMapInstance] = useState(null); 
+  const [markerStyles, setMarkerStyles] = useState({});
+  const [userLocBox, setuserLocBox] = useState(false);
 
   const updateBounds = () => {
     console.log("Updating Bounds")
@@ -59,6 +63,7 @@ const Mapp = ({ coords, bounds, places, setCoords, setBounds, setChildClicked, w
           mapId={"e3d114b3215310c7"}
           defaultCenter = {coords}
           disableDefaultUI={false}
+          fullscreenControl={false}
           zoomControl={true}
           styles={mapStyles}
           onCenterChanged={(e) => {
@@ -91,7 +96,6 @@ const Mapp = ({ coords, bounds, places, setCoords, setBounds, setChildClicked, w
             }
 
             setTempCoords({ lat: e.detail.center.lat, lng:e.detail.center.lng});
-            // console.log("Temp Coords: "+tempCoords);
           }}
           onBoundsChanged={(e) => {
             if (firstVal == 1) {
@@ -100,18 +104,35 @@ const Mapp = ({ coords, bounds, places, setCoords, setBounds, setChildClicked, w
             }
           }}
           >
+            {!coords.lat ? <></> : (<>
+            <AdvancedMarker
+            position={coords}
+            draggable={false}
+            onClick={() => {setuserLocBox(true)}}
+            >
+              <Pin/>
+              {/* <img src={"https://imgsaver.com/images/2024/06/24/google-maps_big.png"} 
+              width={32} height={32} /> */}
+            </AdvancedMarker>
+            {userLocBox && (
+              <InfoWindow position={coords} onCloseClick={() => {setuserLocBox(false)}}>
+                <p>Your Current Location.</p>
+              </InfoWindow>
+            )}
+            </>)}
 
           {places.length && places.map((place, i) => (
             <AdvancedMarker 
             position={{lat: Number(place.latitude), lng: Number(place.longitude)}} 
             key={i}
             draggable={false}
-            onClick={() => {setChildClicked(i)}}>
+            onClick={() => {setChildClicked(i)}}
+            >
               <Pin
                 key={i}
                 background={'#0f9d58'}
                 borderColor={'#006425'}
-                glyphColor={'#60d98f'}
+                glyphColor={'#1A2130'}  // 60d98f
                 scale={0.8}
               >
               </Pin>
