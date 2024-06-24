@@ -12,6 +12,7 @@ const App = () => {
 
   const [coords, setCoords] = useState({});
   const [bounds, setBounds] = useState(null);
+  const [firstVal, setfirstVal] = useState(1);
 
   const [weatherData, setWeatherData] = useState([]);
   const [filteredPlaces, setFilteredPlaces] = useState([]);
@@ -54,7 +55,8 @@ const App = () => {
   }, [rating]);
 
   useEffect(() => {
-    if (bounds && Temp == 1) {
+    console.log("Again Changed Bounds ? ")
+    if (bounds && Temp <= 3) {
       setIsLoading(true);
 
       // getWeatherData(coords.lat, coords.lng)
@@ -62,13 +64,13 @@ const App = () => {
 
       getPlacesData(type, bounds.southWest, bounds.northEast)
         .then((data) => {
-          setPlaces(data.filter((place) => place.name && place.num_reviews > 0));
+          setPlaces(data.filter((place) => place.name && place.num_reviews >= 0));
           setFilteredPlaces([]);
           setRating('');
           setIsLoading(false);
           console.log(data);
         });
-      setTemp(0);
+      setTemp(Temp + 1);
     }
   }, [bounds, type]);
 
@@ -76,6 +78,7 @@ const App = () => {
 
   const onPlaceChanged = () => {
     setCoords({});
+    setfirstVal(1);
     const lat = autocomplete.getPlace().geometry.location.lat();
     const lng = autocomplete.getPlace().geometry.location.lng();
     setCoords({ lat: lat, lng: lng });
@@ -107,7 +110,8 @@ const App = () => {
             bounds={bounds}
             places={filteredPlaces.length ? filteredPlaces : places}
             weatherData={weatherData}
-            // placeCahnge={onPlaceChanged}
+            firstVal={firstVal}
+            setfirstVal={setfirstVal}
           />
         </Grid>
       </Grid>
