@@ -9,7 +9,8 @@ import {
   Map,
   useMap,
   Pin,
-  InfoWindow
+  InfoWindow,
+  AdvancedMarker
 } from "@vis.gl/react-google-maps";
 
 import mapStyles from '../../mapStyles';
@@ -25,12 +26,11 @@ const MapComponent = ({ onMapLoaded }) => {
   return <>...</>;
 };
 
-const Mapp = ({ coords, bounds, places, setCoords, setBounds, setChildClicked, weatherData }) => {
+const Mapp = ({ coords, bounds, places, setCoords, setBounds, setChildClicked, weatherData, firstVal, setfirstVal }) => {
   const matches = useMediaQuery('(min-width:600px)');
   const classes = useStyles();
   const [tempCoords, setTempCoords] = useState({});
   const [mapInstance, setMapInstance] = useState(null); 
-  const [firstVal, setfirstVal] = useState(1);
 
   const updateBounds = () => {
     console.log("Updating Bounds")
@@ -55,6 +55,8 @@ const Mapp = ({ coords, bounds, places, setCoords, setBounds, setChildClicked, w
         <Map
           id={'main-map'}
           defaultZoom={13}
+          // mapId={process.env.REACT_APP_GOOGLE_MAP_ID}
+          mapId={"e3d114b3215310c7"}
           defaultCenter = {coords}
           disableDefaultUI={false}
           zoomControl={true}
@@ -98,6 +100,46 @@ const Mapp = ({ coords, bounds, places, setCoords, setBounds, setChildClicked, w
             }
           }}
           >
+
+          {places.length && places.map((place, i) => (
+            <AdvancedMarker 
+            position={{lat: Number(place.latitude), lng: Number(place.longitude)}} 
+            key={i}
+            draggable={false}
+            onClick={() => {setChildClicked(i)}}>
+              <Pin
+                key={i}
+                background={'#0f9d58'}
+                borderColor={'#006425'}
+                glyphColor={'#60d98f'}
+                scale={0.8}
+              >
+              </Pin>
+            </AdvancedMarker>
+          ))}
+
+          {/* {places.length && places.map((place, i) => (
+          <div
+            className={classes.markerContainer}
+            lat={Number(place.latitude)}
+            lng={Number(place.longitude)}
+            key={i}
+          >
+            {!matches
+              ? <LocationOnOutlinedIcon color="primary" fontSize="large" />
+              : (
+                <Paper elevation={3} className={classes.paper}>
+                  <Typography className={classes.typography} variant="subtitle2" gutterBottom> {place.name}</Typography>
+                  <img
+                    className={classes.pointer}
+                    src={place.photo ? place.photo.images.large.url : 'https://www.foodserviceandhospitality.com/wp-content/uploads/2016/09/Restaurant-Placeholder-001.jpg'}
+                   alt='a'
+                   />
+                  <Rating name="read-only" size="small" value={Number(place.rating)} readOnly />
+                </Paper>
+              )}
+          </div>
+          ))} */}
         </Map>
         <MapComponent onMapLoaded={handleMapLoad}/>
       </div>
@@ -119,27 +161,27 @@ const Mapp = ({ coords, bounds, places, setCoords, setBounds, setChildClicked, w
   //       }}
   //       onChildClick={(child) => setChildClicked(child)}
   //     >
-  //       {places.length && places.map((place, i) => (
-  //         <div
-  //           className={classes.markerContainer}
-  //           lat={Number(place.latitude)}
-  //           lng={Number(place.longitude)}
-  //           key={i}
-  //         >
-  //           {!matches
-  //             ? <LocationOnOutlinedIcon color="primary" fontSize="large" />
-  //             : (
-  //               <Paper elevation={3} className={classes.paper}>
-  //                 <Typography className={classes.typography} variant="subtitle2" gutterBottom> {place.name}</Typography>
-  //                 <img
-  //                   className={classes.pointer}
-  //                   src={place.photo ? place.photo.images.large.url : 'https://www.foodserviceandhospitality.com/wp-content/uploads/2016/09/Restaurant-Placeholder-001.jpg'}
-  //                  alt='a'
-  //                  />
-  //                 <Rating name="read-only" size="small" value={Number(place.rating)} readOnly />
-  //               </Paper>
-  //             )}
-  //         </div>
+        // {places.length && places.map((place, i) => (
+        //   <div
+        //     className={classes.markerContainer}
+        //     lat={Number(place.latitude)}
+        //     lng={Number(place.longitude)}
+        //     key={i}
+        //   >
+        //     {!matches
+        //       ? <LocationOnOutlinedIcon color="primary" fontSize="large" />
+        //       : (
+        //         <Paper elevation={3} className={classes.paper}>
+        //           <Typography className={classes.typography} variant="subtitle2" gutterBottom> {place.name}</Typography>
+        //           <img
+        //             className={classes.pointer}
+        //             src={place.photo ? place.photo.images.large.url : 'https://www.foodserviceandhospitality.com/wp-content/uploads/2016/09/Restaurant-Placeholder-001.jpg'}
+        //            alt='a'
+        //            />
+        //           <Rating name="read-only" size="small" value={Number(place.rating)} readOnly />
+        //         </Paper>
+        //       )}
+        //   </div>
   //       ))}
   //       {weatherData?.list?.length && weatherData.list.map((data, i) => (
   //         <div key={i} lat={data.coord.lat} lng={data.coord.lon}>
