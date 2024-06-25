@@ -1,5 +1,5 @@
 import React from 'react';
-import { Autocomplete, GoogleMap, useLoadScript } from '@react-google-maps/api';
+import { Autocomplete, useLoadScript } from '@react-google-maps/api';
 import { AppBar, Toolbar, Typography, InputBase, Box } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 

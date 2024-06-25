@@ -1,12 +1,14 @@
-import React, { useState, useEffect, createRef, useCallback } from 'react';
+import React, { useState, useEffect, createRef } from 'react';
 import { CircularProgress, Grid, Typography, InputLabel, MenuItem, FormControl, Select, Button } from '@material-ui/core';
 
 import PlaceDetails from '../PlaceDetails/PlaceDetails';
 import useStyles from './styles.js';
 
 const List = ({ 
-  places, type, setType, rating, setRating, childClicked, setChildClicked, isLoading,
-  routeItems, setRouteItems, showRoute, setShowRoute, handleCheckboxChange
+  isLoading, childClicked, setChildClicked, 
+  places, type, setType, rating, setRating,
+  routeItems, setRouteItems, showRoute, setShowRoute, 
+  handleCheckboxChange
   }) => {
 
   const [elRefs, setElRefs] = useState([]);
@@ -42,6 +44,7 @@ const List = ({
               <MenuItem value="4.5">Above 4.5</MenuItem>
             </Select>
           </FormControl>
+
           {!showRoute ?
             <Button size="small" color="primary" className={classes.routeButton} 
             onClick={() => setShowRoute(true)}
@@ -57,17 +60,18 @@ const List = ({
             Disable Route
             </Button>
           )}
+          
           <Grid container spacing={3} className={classes.list}>
             {places?.map((place, i) => (
               <Grid ref={elRefs[i]} key={i} item xs={12}>
                 <PlaceDetails 
+                place={place} 
                 selected={Number(childClicked) === i} 
                 refProp={elRefs[i]} 
                 setChildClicked={setChildClicked}
-                place={place} 
                 routeItems={routeItems}
-                handleCheckboxChange={handleCheckboxChange}
                 indexNumber={i}
+                handleCheckboxChange={handleCheckboxChange}
                 />
               </Grid>
             ))}

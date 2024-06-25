@@ -1,23 +1,17 @@
 import React, { useState, useEffect } from 'react';
-// import GoogleMapReact from 'google-map-react';
-import { useMediaQuery } from '@material-ui/core';
-// import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
-// import Rating from '@material-ui/lab/Rating';
 
 import {
-  APIProvider,
+  Pin,
   Map,
   useMap,
-  Pin,
-  // Marker,
   InfoWindow,
+  APIProvider,
   AdvancedMarker,
   useMapsLibrary
 } from "@vis.gl/react-google-maps";
 
 import mapStyles from './mapStyles';
 import useStyles from './styles.js';
-// import { Marker } from '@react-google-maps/api';
 
 const MapComponent = ({ onMapLoaded }) => {
   const map = useMap('main-map');
@@ -29,17 +23,17 @@ const MapComponent = ({ onMapLoaded }) => {
   return <>...</>;
 };
 
-const Mapp = ({ coords, bounds, places, setCoords, setBounds, 
-  setChildClicked, weatherData, firstVal, setfirstVal, farthestPlace, showRoute, routeItems }) => {
-  const matches = useMediaQuery('(min-width:600px)');
+const Mapp = ({ 
+  coords, setCoords, setBounds, places, 
+  setChildClicked, firstVal, setfirstVal, 
+  farthestPlace, showRoute, routeItems }) => {
+  
   const classes = useStyles();
   const [tempCoords, setTempCoords] = useState({});
   const [mapInstance, setMapInstance] = useState(null); 
-  const [markerStyles, setMarkerStyles] = useState({});
   const [userLocBox, setuserLocBox] = useState(false);
 
   const updateBounds = () => {
-    // console.log("Updating Bounds")
     if (mapInstance) {
       const bnds = mapInstance.getBounds();
       if (bnds) {
@@ -73,13 +67,11 @@ const Mapp = ({ coords, bounds, places, setCoords, setBounds,
               if (e.detail.center.lng - coords.lng > 0.10) {
                 setCoords({ lat: e.detail.center.lat, lng:e.detail.center.lng});
                 updateBounds();
-                // console.log("(moved right) lng diff > .10");
               }
             } else {
               if(coords.lng - e.detail.center.lng > 0.10) {
                 setCoords({ lat: e.detail.center.lat, lng:e.detail.center.lng});
                 updateBounds();
-                // console.log("(moved left) lng diff > .10");
               }
             }
 
@@ -87,13 +79,11 @@ const Mapp = ({ coords, bounds, places, setCoords, setBounds,
               if (e.detail.center.lat - coords.lat > 0.10) {
                 setCoords({ lat: e.detail.center.lat, lng:e.detail.center.lng});
                 updateBounds();
-                // console.log("(moved up) lat diff > .10");
               }
             } else {
               if(coords.lat - e.detail.center.lat > 0.10) {
                 setCoords({ lat: e.detail.center.lat, lng:e.detail.center.lng});
                 updateBounds();
-                // console.log("(moved down) lat diff > .10");
               }
             }
 
@@ -115,8 +105,6 @@ const Mapp = ({ coords, bounds, places, setCoords, setBounds,
                 onClick={() => {setuserLocBox(true)}}
                 >
                   <Pin/>
-                  {/* <img src={"https://imgsaver.com/images/2024/06/24/google-maps_big.png"} 
-                  width={32} height={32} /> */}
                 </AdvancedMarker>
               {userLocBox && (
                 <InfoWindow position={coords} onCloseClick={() => {setuserLocBox(false)}}>
@@ -177,15 +165,12 @@ const Directions = ({
   const [directionsRenderer, setDirectionsRenderer] = useState();
   const [currRoute, setCurrRoute] = useState();
 
-  const [waypoints, setWaypoints] = useState([]);
-
   const mode = window.google.maps.TravelMode.DRIVING;
 
   useEffect(() => {
     if(!mapInstance || !routesLibrary) return;
     setDirectionsService(new routesLibrary.DirectionsService()); 
     setDirectionsRenderer(new routesLibrary.DirectionsRenderer());
-    // console.log("Service + Renderer Setup")
   }, [mapInstance, routesLibrary])
 
 
@@ -193,7 +178,6 @@ const Directions = ({
     try {
       const drr = directionsRenderer.getDirections();
       if(drr) {
-        // console.log("Found Dir.")
         setCurrRoute(null);
         directionsRenderer.setDirections(null);
         directionsRenderer.setMap(null);
@@ -203,7 +187,6 @@ const Directions = ({
     }
 
     if(!showRoute || routeItems.length == 0) return;
-    // console.log(routeItems)
 
     const tempWaypoints = routeItems.map(item => ({
       location: {
@@ -221,7 +204,6 @@ const Directions = ({
       optimizeWaypoints: true,
       waypoints: tempWaypoints
     }).then(response => {
-      console.log(response);
       directionsRenderer.setMap(map);
       directionsRenderer.setDirections(response);
       setCurrRoute(response.routes);
