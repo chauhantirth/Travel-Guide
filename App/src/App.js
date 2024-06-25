@@ -5,6 +5,7 @@ import { getPlacesData, getWeatherData } from './api/index.js';
 import Header from './components/Header/Header';
 import List from './components/List/List';
 import Map from './components/Map/Map';
+import DistanceCalculator from './components/Distance/Distance';
 
 const App = () => {
   const [type, setType] = useState('restaurants');
@@ -25,6 +26,7 @@ const App = () => {
 
   const [showRoute, setShowRoute] = useState(false);
   const [routeItems, setRouteItems] = useState([]);
+  const [farthestPlace, setFarthestPlace] = useState({place_id: null, dist: 0, unit: 'kms'});
 
   const handleCheckboxChange = useCallback((item) => {
     setRouteItems(prevRouteItems => {
@@ -38,9 +40,43 @@ const App = () => {
     });
   });
 
+  // useEffect(() => {
+        
+  //   console.log(routeItems)
+  //   setFarthestPlace({place_id: null, dist: 0, unit: 'kms'})
+  //   console.log(farthestPlace)
+  //   routeItems.map((place, i) => {
+  //     const itemDist = DistanceCalculator(coords, {lat: place.latitude, lng: place.longitude})
+  //     console.log("Calc Dist: "+ itemDist + ", Old Dist: "+farthestPlace.dist)
+  //     if(itemDist > farthestPlace.dist) {
+  //       console.log("Updating Farthest Route."+ itemDist)
+  //       setFarthestPlace(
+  //         {place_id: place.location_id, dist: itemDist, unit: 'kms'}
+  //       )
+  //     }
+  //   })
+  // }, [routeItems])
+
   useEffect(() => {
-    console.log("Changed RouteItems List.")
-    console.log(routeItems)
+    if (!routeItems.length) {
+      setFarthestPlace({ place_id: null, dist: 0, unit: 'kms' });
+      return;
+    }
+
+    const farthest = routeItems.reduce((max, place) => {
+      const itemDist = DistanceCalculator(coords, { lat: place.latitude, lng: place.longitude });
+      if (itemDist > max.dist) {
+        return { place_id: place.location_id, dist: itemDist, unit: 'kms' };
+      }
+      return max;
+    }, { place_id: null, dist: 0, unit: 'kms' });
+
+    setFarthestPlace(farthest);
+
+  }, [routeItems]);
+
+  useEffect(() => {
+    console.log(farthestPlace)
   }, [routeItems])
 
   useEffect(() => {
@@ -138,6 +174,7 @@ const App = () => {
             weatherData={weatherData}
             firstVal={firstVal}
             setfirstVal={setfirstVal}
+            farthestPlace={farthestPlace}
           />
         </Grid>
       </Grid>

@@ -28,7 +28,8 @@ const MapComponent = ({ onMapLoaded }) => {
   return <>...</>;
 };
 
-const Mapp = ({ coords, bounds, places, setCoords, setBounds, setChildClicked, weatherData, firstVal, setfirstVal }) => {
+const Mapp = ({ coords, bounds, places, setCoords, setBounds, 
+  setChildClicked, weatherData, firstVal, setfirstVal, farthestPlace }) => {
   const matches = useMediaQuery('(min-width:600px)');
   const classes = useStyles();
   const [tempCoords, setTempCoords] = useState({});
@@ -51,6 +52,8 @@ const Mapp = ({ coords, bounds, places, setCoords, setBounds, setChildClicked, w
   const handleMapLoad = (map) => {
     setMapInstance(map);
   };
+
+  console.log(farthestPlace)
 
   if (!coords.lat) return <>Getting Location...</>
   return (
