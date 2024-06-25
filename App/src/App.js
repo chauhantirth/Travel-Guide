@@ -26,7 +26,7 @@ const App = () => {
 
   const [showRoute, setShowRoute] = useState(false);
   const [routeItems, setRouteItems] = useState([]);
-  const [farthestPlace, setFarthestPlace] = useState({place_id: null, dist: 0, unit: 'kms'});
+  const [farthestPlace, setFarthestPlace] = useState({place_id: null, dist: 0, unit: 'kms', plc: {}});
 
   const handleCheckboxChange = useCallback((item) => {
     setRouteItems(prevRouteItems => {
@@ -40,36 +40,19 @@ const App = () => {
     });
   });
 
-  // useEffect(() => {
-        
-  //   console.log(routeItems)
-  //   setFarthestPlace({place_id: null, dist: 0, unit: 'kms'})
-  //   console.log(farthestPlace)
-  //   routeItems.map((place, i) => {
-  //     const itemDist = DistanceCalculator(coords, {lat: place.latitude, lng: place.longitude})
-  //     console.log("Calc Dist: "+ itemDist + ", Old Dist: "+farthestPlace.dist)
-  //     if(itemDist > farthestPlace.dist) {
-  //       console.log("Updating Farthest Route."+ itemDist)
-  //       setFarthestPlace(
-  //         {place_id: place.location_id, dist: itemDist, unit: 'kms'}
-  //       )
-  //     }
-  //   })
-  // }, [routeItems])
-
   useEffect(() => {
     if (!routeItems.length) {
-      setFarthestPlace({ place_id: null, dist: 0, unit: 'kms' });
+      setFarthestPlace({ place_id: null, dist: 0, unit: 'kms', plc: {}});
       return;
     }
 
     const farthest = routeItems.reduce((max, place) => {
       const itemDist = DistanceCalculator(coords, { lat: place.latitude, lng: place.longitude });
       if (itemDist > max.dist) {
-        return { place_id: place.location_id, dist: itemDist, unit: 'kms' };
+        return { place_id: place.location_id, dist: itemDist, unit: 'kms', plc: place };
       }
       return max;
-    }, { place_id: null, dist: 0, unit: 'kms' });
+    }, { place_id: null, dist: 0, unit: 'kms', plc: {}});
 
     setFarthestPlace(farthest);
 
@@ -112,7 +95,7 @@ const App = () => {
 
   useEffect(() => {
     console.log("Again Changed Bounds ? ")
-    if (bounds && Temp <= 3) {
+    if (bounds && Temp <= 7) {
       setIsLoading(true);
 
       // getWeatherData(coords.lat, coords.lng)
@@ -175,6 +158,8 @@ const App = () => {
             firstVal={firstVal}
             setfirstVal={setfirstVal}
             farthestPlace={farthestPlace}
+            showRoute={showRoute}
+            routeItems={routeItems}
           />
         </Grid>
       </Grid>

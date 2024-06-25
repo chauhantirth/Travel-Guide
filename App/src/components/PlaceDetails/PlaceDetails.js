@@ -14,7 +14,7 @@ const PlaceDetails = ({ place, selected, refProp, setChildClicked, routeItems, i
     <Card elevation={6}>
       <CardMedia
         style={{ height: 350 }}
-        image={place.photo ? place.photo.images.large.url : 'https://www.foodserviceandhospitality.com/wp-content/uploads/2016/09/Restaurant-Placeholder-001.jpg'}
+        image={place.photo ? place.photo.images.large.url : 'https://static3.depositphotos.com/1003631/209/i/450/depositphotos_2099183-stock-photo-fine-table-setting-in-gourmet.jpg'}
         title={place.name}
       />
       <CardContent>
@@ -62,15 +62,17 @@ const PlaceDetails = ({ place, selected, refProp, setChildClicked, routeItems, i
         <Button size="small" color="primary" onClick={() => window.open(place.website, '_blank')}>
           Website
         </Button>
-        <Typography component="legend">  Add Destination: </Typography>
-        <input
+        <div className={classes.input}>
+          <Typography component="legend">  Add Destination: </Typography>
+          <input
             type="checkbox"
             checked={routeItems.includes(place)}
             onChange={() => {
               handleCheckboxChange(place)
               setChildClicked(indexNumber)
             }}
-        />
+          />
+        </div>
       </CardActions>
     </Card>
   );

@@ -44,11 +44,16 @@ const List = ({
           </FormControl>
           {!showRoute ?
             <Button size="small" color="primary" className={classes.routeButton} 
-            onClick={() => setShowRoute(true)}>
+            onClick={() => setShowRoute(true)}
+            disabled={routeItems.length == 0}
+            >
             Show Route
           </Button> : (
             <Button size="small" color="primary" className={classes.routeButton} 
-            onClick={() => setShowRoute(false)}>
+            onClick={() => {
+              setShowRoute(false);
+              setRouteItems([]);
+              }}>
             Disable Route
             </Button>
           )}

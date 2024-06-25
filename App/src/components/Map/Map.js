@@ -1,17 +1,18 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 // import GoogleMapReact from 'google-map-react';
-import { Paper, Typography, useMediaQuery } from '@material-ui/core';
-import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
-import Rating from '@material-ui/lab/Rating';
+import { useMediaQuery } from '@material-ui/core';
+// import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
+// import Rating from '@material-ui/lab/Rating';
 
 import {
   APIProvider,
   Map,
   useMap,
   Pin,
-  Marker,
+  // Marker,
   InfoWindow,
-  AdvancedMarker
+  AdvancedMarker,
+  useMapsLibrary
 } from "@vis.gl/react-google-maps";
 
 import mapStyles from './mapStyles';
@@ -29,7 +30,7 @@ const MapComponent = ({ onMapLoaded }) => {
 };
 
 const Mapp = ({ coords, bounds, places, setCoords, setBounds, 
-  setChildClicked, weatherData, firstVal, setfirstVal, farthestPlace }) => {
+  setChildClicked, weatherData, firstVal, setfirstVal, farthestPlace, showRoute, routeItems }) => {
   const matches = useMediaQuery('(min-width:600px)');
   const classes = useStyles();
   const [tempCoords, setTempCoords] = useState({});
@@ -38,7 +39,7 @@ const Mapp = ({ coords, bounds, places, setCoords, setBounds,
   const [userLocBox, setuserLocBox] = useState(false);
 
   const updateBounds = () => {
-    console.log("Updating Bounds")
+    // console.log("Updating Bounds")
     if (mapInstance) {
       const bnds = mapInstance.getBounds();
       if (bnds) {
@@ -52,8 +53,6 @@ const Mapp = ({ coords, bounds, places, setCoords, setBounds,
   const handleMapLoad = (map) => {
     setMapInstance(map);
   };
-
-  console.log(farthestPlace)
 
   if (!coords.lat) return <>Getting Location...</>
   return (
@@ -74,13 +73,13 @@ const Mapp = ({ coords, bounds, places, setCoords, setBounds,
               if (e.detail.center.lng - coords.lng > 0.10) {
                 setCoords({ lat: e.detail.center.lat, lng:e.detail.center.lng});
                 updateBounds();
-                console.log("(moved right) lng diff > .10");
+                // console.log("(moved right) lng diff > .10");
               }
             } else {
               if(coords.lng - e.detail.center.lng > 0.10) {
                 setCoords({ lat: e.detail.center.lat, lng:e.detail.center.lng});
                 updateBounds();
-                console.log("(moved left) lng diff > .10");
+                // console.log("(moved left) lng diff > .10");
               }
             }
 
@@ -88,13 +87,13 @@ const Mapp = ({ coords, bounds, places, setCoords, setBounds,
               if (e.detail.center.lat - coords.lat > 0.10) {
                 setCoords({ lat: e.detail.center.lat, lng:e.detail.center.lng});
                 updateBounds();
-                console.log("(moved up) lat diff > .10");
+                // console.log("(moved up) lat diff > .10");
               }
             } else {
               if(coords.lat - e.detail.center.lat > 0.10) {
                 setCoords({ lat: e.detail.center.lat, lng:e.detail.center.lng});
                 updateBounds();
-                console.log("(moved down) lat diff > .10");
+                // console.log("(moved down) lat diff > .10");
               }
             }
 
@@ -107,114 +106,130 @@ const Mapp = ({ coords, bounds, places, setCoords, setBounds,
             }
           }}
           >
-            {!coords.lat ? <></> : (<>
-            <AdvancedMarker
-            position={coords}
-            draggable={false}
-            onClick={() => {setuserLocBox(true)}}
-            >
-              <Pin/>
-              {/* <img src={"https://imgsaver.com/images/2024/06/24/google-maps_big.png"} 
-              width={32} height={32} /> */}
-            </AdvancedMarker>
-            {userLocBox && (
-              <InfoWindow position={coords} onCloseClick={() => {setuserLocBox(false)}}>
-                <p>Your Current Location.</p>
-              </InfoWindow>
-            )}
-            </>)}
+          {!coords.lat ? <></> : (
+            showRoute ? <div key={"userLocPointer"}></div> : (
+              <div key={'unique-key099'}>
+                <AdvancedMarker
+                position={coords}
+                draggable={false}
+                onClick={() => {setuserLocBox(true)}}
+                >
+                  <Pin/>
+                  {/* <img src={"https://imgsaver.com/images/2024/06/24/google-maps_big.png"} 
+                  width={32} height={32} /> */}
+                </AdvancedMarker>
+              {userLocBox && (
+                <InfoWindow position={coords} onCloseClick={() => {setuserLocBox(false)}}>
+                  <p>Your Current Location.</p>
+                </InfoWindow>
+              )}
+            </div>
+            )
+          )}
 
           {places.length && places.map((place, i) => (
-            <AdvancedMarker 
-            position={{lat: Number(place.latitude), lng: Number(place.longitude)}} 
-            key={i}
-            draggable={false}
-            onClick={() => {setChildClicked(i)}}
-            >
-              <Pin
-                key={i}
-                background={'#0f9d58'}
-                borderColor={'#006425'}
-                glyphColor={'#1A2130'}  // 60d98f
-                scale={0.8}
+            showRoute ? <div key={i}></div> : (
+              <AdvancedMarker 
+              position={{lat: Number(place.latitude), lng: Number(place.longitude)}} 
+              key={i}
+              draggable={false}
+              onClick={() => {setChildClicked(i)}}
               >
-              </Pin>
-            </AdvancedMarker>
+                <Pin
+                  key={i}
+                  background={'#0f9d58'}
+                  borderColor={'#006425'}
+                  glyphColor={'#1A2130'}  // 60d98f
+                  scale={0.8}
+                >
+                </Pin>
+              </AdvancedMarker>
+            )
           ))}
 
-          {/* {places.length && places.map((place, i) => (
-          <div
-            className={classes.markerContainer}
-            lat={Number(place.latitude)}
-            lng={Number(place.longitude)}
-            key={i}
-          >
-            {!matches
-              ? <LocationOnOutlinedIcon color="primary" fontSize="large" />
-              : (
-                <Paper elevation={3} className={classes.paper}>
-                  <Typography className={classes.typography} variant="subtitle2" gutterBottom> {place.name}</Typography>
-                  <img
-                    className={classes.pointer}
-                    src={place.photo ? place.photo.images.large.url : 'https://www.foodserviceandhospitality.com/wp-content/uploads/2016/09/Restaurant-Placeholder-001.jpg'}
-                   alt='a'
-                   />
-                  <Rating name="read-only" size="small" value={Number(place.rating)} readOnly />
-                </Paper>
-              )}
-          </div>
-          ))} */}
+          {!mapInstance ? <></> : (
+          <Directions 
+          coords={coords}
+          mapInstance={mapInstance}
+          showRoute={showRoute}
+          farthestPlace={farthestPlace}
+          routeItems={routeItems}
+          />
+          )}
         </Map>
         <MapComponent onMapLoaded={handleMapLoad}/>
       </div>
     </APIProvider>
   )
-
-  // return (
-  //   <div className={classes.mapContainer}>
-  //     <GoogleMapReact
-  //       bootstrapURLKeys={{ key: process.env.REACT_APP_GOOGLE_MAP_API_KEY }}
-  //       defaultCenter={coords}
-  //       center={coords}
-  //       defaultZoom={14}
-  //       margin={[50, 50, 50, 50]}
-  //       options={{ disableDefaultUI: true, zoomControl: true, styles: mapStyles }}
-  //       onChange={(e) => {
-  //         setCoords({ lat: e.center.lat, lng: e.center.lng });
-  //         setBounds({ ne: e.marginBounds.ne, sw: e.marginBounds.sw });
-  //       }}
-  //       onChildClick={(child) => setChildClicked(child)}
-  //     >
-        // {places.length && places.map((place, i) => (
-        //   <div
-        //     className={classes.markerContainer}
-        //     lat={Number(place.latitude)}
-        //     lng={Number(place.longitude)}
-        //     key={i}
-        //   >
-        //     {!matches
-        //       ? <LocationOnOutlinedIcon color="primary" fontSize="large" />
-        //       : (
-        //         <Paper elevation={3} className={classes.paper}>
-        //           <Typography className={classes.typography} variant="subtitle2" gutterBottom> {place.name}</Typography>
-        //           <img
-        //             className={classes.pointer}
-        //             src={place.photo ? place.photo.images.large.url : 'https://www.foodserviceandhospitality.com/wp-content/uploads/2016/09/Restaurant-Placeholder-001.jpg'}
-        //            alt='a'
-        //            />
-        //           <Rating name="read-only" size="small" value={Number(place.rating)} readOnly />
-        //         </Paper>
-        //       )}
-        //   </div>
-  //       ))}
-  //       {weatherData?.list?.length && weatherData.list.map((data, i) => (
-  //         <div key={i} lat={data.coord.lat} lng={data.coord.lon}>
-  //           <img src={`http://openweathermap.org/img/w/${data.weather[0].icon}.png`} height="70px" alt='a' />
-  //         </div>
-  //       ))}
-  //     </GoogleMapReact>
-  //   </div>
-  // );
 };
+
+const Directions = ({
+    coords,
+    mapInstance,
+    showRoute,
+    farthestPlace,
+    routeItems,
+  }) => {
+  const map = useMap('main-map')
+  const routesLibrary = useMapsLibrary("routes");
+
+  const [directionsService, setDirectionsService] = useState();
+  const [directionsRenderer, setDirectionsRenderer] = useState();
+  const [currRoute, setCurrRoute] = useState();
+
+  const [waypoints, setWaypoints] = useState([]);
+
+  const mode = window.google.maps.TravelMode.DRIVING;
+
+  useEffect(() => {
+    if(!mapInstance || !routesLibrary) return;
+    setDirectionsService(new routesLibrary.DirectionsService()); 
+    setDirectionsRenderer(new routesLibrary.DirectionsRenderer());
+    // console.log("Service + Renderer Setup")
+  }, [mapInstance, routesLibrary])
+
+
+  useEffect(() => {
+    try {
+      const drr = directionsRenderer.getDirections();
+      if(drr) {
+        // console.log("Found Dir.")
+        setCurrRoute(null);
+        directionsRenderer.setDirections(null);
+        directionsRenderer.setMap(null);
+      }      
+    } catch(TypeError) {
+      console.log("")
+    }
+
+    if(!showRoute || routeItems.length == 0) return;
+    // console.log(routeItems)
+
+    const tempWaypoints = routeItems.map(item => ({
+      location: {
+        lat: Number(item.latitude),
+        lng: Number(item.longitude)
+      },
+      stopover: true
+    }));
+
+    directionsService.route({
+      origin: {lat: coords.lat, lng: coords.lng},
+      destination: {lat: Number(farthestPlace.plc.latitude), lng: Number(farthestPlace.plc.longitude)},
+      travelMode: mode,
+      provideRouteAlternatives: false,
+      optimizeWaypoints: true,
+      waypoints: tempWaypoints
+    }).then(response => {
+      console.log(response);
+      directionsRenderer.setMap(map);
+      directionsRenderer.setDirections(response);
+      setCurrRoute(response.routes);
+    })
+  }, [routeItems, showRoute])
+
+  return null;
+};
+
 
 export default Mapp;
