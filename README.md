@@ -22,5 +22,6 @@ It is purely built in **ReactJS** with the help of [Material-UI](https://mui.com
 
 - [@chauhantirth](https://www.github.com/chauhantirth)
 - [@drshan37](https://github.com/drshan37)
+- [@sahilsnippet](https://github.com/sahilsnippet)
 
 > Note: Give a star to this repository if you find this project interesting !!
